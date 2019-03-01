@@ -1,0 +1,21 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+     - checkout
+     - setup_remote_docker
+     - run:
+          name: Build test go docker container
+          command: docker build -t gabe-ochoa/fc4 .
+  publish-latest:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push fc4:latest
